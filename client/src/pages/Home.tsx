@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // ── スライド画像URL（ホワイトボード風スライド 全14枚）──
 const SLIDE_URLS = [
@@ -43,6 +43,17 @@ const topics = [
   { id: 7, label: "まとめ",          emoji: "✅", title: "まとめ ─ 個人開発でここまでできる",          desc: "LLM × フロントエンドで価値を届けるために",           slides: [12, 13] },
 ];
 
+// ── カードごとの背面カラー（POP手書き風）──
+const CARD_COLORS = [
+  { bg: "#FFE135", border: "#E8C200", text: "#1a1410" },
+  { bg: "#FF7043", border: "#E64A19", text: "#fff" },
+  { bg: "#EC407A", border: "#C2185B", text: "#fff" },
+  { bg: "#42A5F5", border: "#1565C0", text: "#fff" },
+  { bg: "#66BB6A", border: "#2E7D32", text: "#fff" },
+  { bg: "#AB47BC", border: "#6A1B9A", text: "#fff" },
+  { bg: "#FF7043", border: "#E64A19", text: "#fff" },
+];
+
 // ── スライドビューアーモーダル（全画面）──
 function SlideViewer({
   slideIndexes,
@@ -56,7 +67,7 @@ function SlideViewer({
   const url = SLIDE_URLS[slideIndexes[current]];
 
   // キーボード操作
-  useState(() => {
+  useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === "ArrowDown") setCurrent((c) => Math.min(total - 1, c + 1));
       if (e.key === "ArrowLeft" || e.key === "ArrowUp") setCurrent((c) => Math.max(0, c - 1));
@@ -64,20 +75,20 @@ function SlideViewer({
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  });
+  }, [total, onClose]);
 
   return (
     <div
       className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: "#1a1614" }}
+      style={{ background: "#1a1a1a" }}
     >
       {/* 上部バー */}
       <div
         className="flex items-center justify-between px-6 py-3 shrink-0"
-        style={{ background: "#2a2420", borderBottom: "2px solid #4a4038" }}
+        style={{ background: "#111", borderBottom: "3px solid #FFE135" }}
       >
-        <span className="text-xs font-bold tracking-widest" style={{ color: "#a09080", fontFamily: "'Courier New', monospace" }}>
-          WHITEBOARD SLIDE VIEWER
+        <span className="text-sm font-bold tracking-widest" style={{ color: "#FFE135", fontFamily: "'Fredoka One', cursive" }}>
+          📋 スライドビューアー
         </span>
         <div className="flex items-center gap-4">
           {total > 1 && (
@@ -86,18 +97,18 @@ function SlideViewer({
                 onClick={() => setCurrent((c) => Math.max(0, c - 1))}
                 disabled={current === 0}
                 className="px-4 py-1.5 rounded font-bold text-sm disabled:opacity-30"
-                style={{ background: "#4a4038", color: "#e0d8c8", fontFamily: "'Courier New', monospace" }}
+                style={{ background: "#333", color: "#FFE135", fontFamily: "'Fredoka One', cursive", fontSize: "16px" }}
               >
                 ← 前へ
               </button>
-              <span className="text-sm font-bold" style={{ color: "#a09080", fontFamily: "'Courier New', monospace" }}>
+              <span className="text-base font-bold" style={{ color: "#fff", fontFamily: "'Fredoka One', cursive" }}>
                 {current + 1} / {total}
               </span>
               <button
                 onClick={() => setCurrent((c) => Math.min(total - 1, c + 1))}
                 disabled={current === total - 1}
                 className="px-4 py-1.5 rounded font-bold text-sm disabled:opacity-30"
-                style={{ background: "#4a4038", color: "#e0d8c8", fontFamily: "'Courier New', monospace" }}
+                style={{ background: "#333", color: "#FFE135", fontFamily: "'Fredoka One', cursive", fontSize: "16px" }}
               >
                 次へ →
               </button>
@@ -106,7 +117,7 @@ function SlideViewer({
           <button
             onClick={onClose}
             className="text-sm font-bold px-4 py-1.5 rounded ml-4"
-            style={{ background: "#c03020", color: "#fff", fontFamily: "'Courier New', monospace" }}
+            style={{ background: "#EC407A", color: "#fff", fontFamily: "'Fredoka One', cursive", fontSize: "16px" }}
           >
             ✕ 閉じる
           </button>
@@ -116,7 +127,7 @@ function SlideViewer({
       {/* スライド画像 ─ 残り全画面 */}
       <div
         className="flex-1 flex items-center justify-center"
-        style={{ background: "#1a1614", minHeight: 0 }}
+        style={{ background: "#1a1a1a", minHeight: 0 }}
       >
         <img
           src={url}
@@ -128,7 +139,7 @@ function SlideViewer({
       {/* 下部ヒント */}
       <div
         className="text-center py-2 shrink-0 text-xs"
-        style={{ color: "#5a5048", background: "#2a2420", fontFamily: "'Courier New', monospace" }}
+        style={{ color: "#aaa", background: "#111", fontFamily: "'Zen Maru Gothic', sans-serif" }}
       >
         ← → キーでスライド切り替え　　ESC で閉じる
       </div>
@@ -136,16 +147,19 @@ function SlideViewer({
   );
 }
 
-// ── フリップカード（ホワイトボード風デザイン）──
+// ── フリップカード（クラフト紙 × POP手書き風）──
 function FlipCard({
   topic,
   flipped,
   onClick,
+  colorIndex,
 }: {
   topic: typeof topics[0];
   flipped: boolean;
   onClick: () => void;
+  colorIndex: number;
 }) {
+  const color = CARD_COLORS[colorIndex % CARD_COLORS.length];
   return (
     <div
       className="cursor-pointer"
@@ -156,101 +170,84 @@ function FlipCard({
         style={{
           position: "relative",
           width: "100%",
-          height: "210px",
+          height: "260px",
           transformStyle: "preserve-3d",
-          transition: "transform 0.65s cubic-bezier(0.4,0.2,0.2,1)",
+          transition: "transform 0.7s cubic-bezier(0.4,0.2,0.2,1)",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
-          borderRadius: "12px",
+          borderRadius: "16px",
         }}
       >
-        {/* FRONT ─ 未開封（ホワイトボード裏面風） */}
+        {/* FRONT */}
         <div
-          className="absolute inset-0 flex flex-col items-center justify-center p-5 text-center"
+          className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
-            borderRadius: "12px",
-            background: "linear-gradient(145deg, #e0ddd6 0%, #ccc9c0 100%)",
-            border: "2px solid #b8b4aa",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.5)",
+            borderRadius: "16px",
+            background: "linear-gradient(145deg, #f5e6c8 0%, #e8d5a8 60%, #d9c48a 100%)",
+            border: "3px solid #c8a84b",
+            boxShadow: "4px 4px 0px #b8943a, 0 8px 24px rgba(0,0,0,0.18)",
           }}
         >
-          {/* マーカーで書いた感じの番号 */}
-          <div
-            className="text-xs tracking-widest mb-3 font-bold"
-            style={{ color: "#888078", fontFamily: "'Courier New', monospace" }}
-          >
+          <div style={{ color: "#8B6914", fontFamily: "'Fredoka One', cursive", fontSize: "13px", letterSpacing: "3px", marginBottom: "10px" }}>
             TOPIC {String(topic.id).padStart(2, "0")}
           </div>
-          {/* 大きな「？」手書き風 */}
           <div
-            className="text-5xl font-black leading-none mb-3 select-none"
-            style={{
-              color: "#b0a898",
-              fontFamily: "'Courier New', monospace",
-              textShadow: "1px 1px 0 rgba(255,255,255,0.6)",
-            }}
+            className="select-none"
+            style={{ color: "#c8a84b", fontFamily: "'Fredoka One', cursive", fontSize: "80px", lineHeight: 1, marginBottom: "10px", textShadow: "2px 2px 0 rgba(139,105,20,0.3)" }}
           >
             ?
           </div>
-          <div
-            className="text-sm font-bold"
-            style={{ color: "#5a5248", fontFamily: "'Courier New', monospace" }}
-          >
+          <div style={{ color: "#5a3e10", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "20px", fontWeight: 900 }}>
             {topic.label}
           </div>
-          <div
-            className="absolute bottom-3 right-4 text-xs"
-            style={{ color: "#a09890", fontFamily: "'Courier New', monospace" }}
-          >
-            クリックして開封
+          <div className="absolute bottom-4 right-5" style={{ color: "#a08040", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "12px" }}>
+            タップして開封！
           </div>
         </div>
 
-        {/* BACK ─ 開封後（ホワイトボード表面風） */}
+        {/* BACK */}
         <div
-          className="absolute inset-0 flex flex-col items-center justify-center p-5 text-center"
+          className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
-            borderRadius: "12px",
-            background: "linear-gradient(145deg, #f8f6f0 0%, #ede9e0 100%)",
-            border: "2px solid #c8c0b0",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8)",
+            borderRadius: "16px",
+            background: color.bg,
+            border: `4px solid ${color.border}`,
+            boxShadow: `4px 4px 0px ${color.border}, 0 8px 24px rgba(0,0,0,0.2)`,
           }}
         >
-          {/* ホワイトボードのマーカー線風アンダーライン */}
-          <div className="text-2xl mb-2">{topic.emoji}</div>
-          <div
-            className="text-xs tracking-widest mb-2 font-bold"
-            style={{ color: "#888078", fontFamily: "'Courier New', monospace" }}
-          >
+          <div style={{ fontSize: "36px", marginBottom: "6px" }}>{topic.emoji}</div>
+          <div style={{ color: color.text, fontFamily: "'Fredoka One', cursive", fontSize: "11px", letterSpacing: "3px", opacity: 0.8, marginBottom: "6px" }}>
             TOPIC {String(topic.id).padStart(2, "0")}
           </div>
           <div
-            className="text-base font-black leading-snug mb-2"
             style={{
-              color: "#1a1410",
-              fontFamily: "'Courier New', monospace",
-              borderBottom: "2px solid #2060c0",
-              paddingBottom: "6px",
+              color: color.text,
+              fontFamily: "'Fredoka One', cursive",
+              fontSize: "22px",
+              lineHeight: 1.3,
+              marginBottom: "8px",
+              textShadow: "1px 1px 0 rgba(0,0,0,0.15)",
+              borderBottom: `3px solid ${color.text === "#fff" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.25)"}`,
+              paddingBottom: "8px",
             }}
           >
             {topic.title}
           </div>
-          <div
-            className="text-xs leading-relaxed"
-            style={{ color: "#4a4038", fontFamily: "'Courier New', monospace" }}
-          >
+          <div style={{ color: color.text, fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "13px", opacity: 0.9, lineHeight: 1.5 }}>
             {topic.desc}
           </div>
           <div
-            className="mt-3 text-xs font-bold px-3 py-1 rounded"
+            className="mt-4 font-bold px-5 py-2 rounded-full"
             style={{
-              background: "#2060c0",
-              color: "#fff",
-              fontFamily: "'Courier New', monospace",
+              background: color.text === "#fff" ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.15)",
+              color: color.text,
+              fontFamily: "'Fredoka One', cursive",
+              fontSize: "15px",
+              border: `2px solid ${color.text === "#fff" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.3)"}`,
             }}
           >
             ▶ スライドを見る
@@ -284,74 +281,74 @@ export default function Home() {
     <div
       className="min-h-screen flex flex-col items-center px-5 py-10"
       style={{
-        background: "linear-gradient(160deg, #f0ede6 0%, #e4e0d8 50%, #d8d4cc 100%)",
-        fontFamily: "'Courier New', monospace",
+        background: "linear-gradient(160deg, #FFF8E7 0%, #FFF0C8 40%, #FFE8A8 100%)",
+        fontFamily: "'Zen Maru Gothic', sans-serif",
       }}
     >
       {/* ヘッダー ─ ホワイトボード風 */}
       <div
         className="w-full max-w-5xl rounded-2xl px-8 py-6 mb-10 text-center"
         style={{
-          background: "linear-gradient(145deg, #f8f6f0, #ede9e0)",
-          border: "3px solid #c8c0b0",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8)",
+          background: "linear-gradient(145deg, #fff9e6, #fff3cc)",
+          border: "4px solid #FFE135",
+          boxShadow: "6px 6px 0px #E8C200, 0 12px 40px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9)",
         }}
       >
         {/* ボード上部のフレーム */}
         <div
-          className="text-xs tracking-widest mb-3 font-bold"
-          style={{ color: "#888078" }}
-        >
-          リベシティ × スキルマーケットオフ会
+          style={{ color: "#8B6914", fontFamily: "'Fredoka One', cursive", fontSize: "14px", letterSpacing: "3px", marginBottom: "12px" }}
+          >
+            🎉 リベシティ × スキルマーケットオフ会
         </div>
         <h1
-          className="text-3xl sm:text-4xl font-black leading-tight mb-3"
-          style={{ color: "#1a1410" }}
+          className="leading-tight mb-3"
+          style={{ color: "#1a1410", fontFamily: "'Fredoka One', cursive", fontSize: "clamp(26px, 5vw, 46px)" }}
         >
           LLMを使ったWebアプリ開発の裏側
           <br />
-          <span style={{ color: "#c03020" }}>全部見せます</span>
+          <span style={{ color: "#E64A19", fontSize: "1.1em" }}>全部見せます！</span>
         </h1>
         {/* 手書き風アンダーライン */}
         <div
           className="mx-auto mb-3"
-          style={{ width: "60%", height: "3px", background: "#2060c0", borderRadius: "2px" }}
+          style={{ width: "70%", height: "4px", background: "linear-gradient(90deg, #FFE135, #FF7043, #EC407A)", borderRadius: "4px" }}
         />
-        <p className="text-sm" style={{ color: "#6a5e4e" }}>
-          対談トピックパネル ─ クリックしてテーマを開封しよう！
+        <p style={{ color: "#7a5a20", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "16px", fontWeight: 700 }}>
+          対談トピックパネル ─ クリックしてテーマを開封しよう！🎊
         </p>
       </div>
 
       {/* ヒント */}
-      <p className="text-xs mb-6" style={{ color: "#8a7e6e" }}>
+      <p className="mb-6" style={{ color: "#8B6914", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "15px", fontWeight: 700 }}>
         👆 1回クリック → パネルをめくる　　2回クリック → スライドを表示
       </p>
 
       {/* 進捗バー */}
       <div className="w-full max-w-5xl mb-8">
-        <div className="flex justify-between text-xs mb-2" style={{ color: "#8a7e6e" }}>
+        <div className="flex justify-between mb-2" style={{ color: "#8B6914", fontFamily: "'Fredoka One', cursive", fontSize: "15px" }}>
           <span>開封済みトピック</span>
           <span>{opened} / {total}</span>
         </div>
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: "#d0c8b8" }}>
+        <div className="h-3 rounded-full overflow-hidden" style={{ background: "#e8d5a8", border: "2px solid #c8a84b" }}>
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{
               width: `${(opened / total) * 100}%`,
-              background: "linear-gradient(90deg, #2060c0, #c03020)",
+              background: "linear-gradient(90deg, #FFE135, #FF7043, #EC407A)",
             }}
           />
         </div>
       </div>
 
       {/* グリッド */}
-      <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-        {topics.map((topic) => (
+      <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        {topics.map((topic, i) => (
           <FlipCard
             key={topic.id}
             topic={topic}
             flipped={flipped.has(topic.id)}
             onClick={() => handleCardClick(topic)}
+            colorIndex={i}
           />
         ))}
       </div>
@@ -359,12 +356,14 @@ export default function Home() {
       {/* リセットボタン */}
       <button
         onClick={reset}
-        className="px-8 py-3 rounded-full font-bold text-sm tracking-widest"
+        className="px-10 py-3 rounded-full font-bold"
         style={{
-          background: "#d0c8b8",
-          color: "#5a4e3e",
-          border: "2px solid #b8b0a0",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          background: "#fff",
+          color: "#8B6914",
+          border: "3px solid #c8a84b",
+          boxShadow: "4px 4px 0px #c8a84b",
+          fontFamily: "'Fredoka One', cursive",
+          fontSize: "18px",
         }}
       >
         ↺ パネルをリセット
