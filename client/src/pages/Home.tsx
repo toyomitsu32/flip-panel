@@ -184,24 +184,41 @@ function FlipCard({
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             borderRadius: "16px",
-            background: "linear-gradient(145deg, #f5e6c8 0%, #e8d5a8 60%, #d9c48a 100%)",
-            border: "3px solid #c8a84b",
-            boxShadow: "4px 4px 0px #b8943a, 0 8px 24px rgba(0,0,0,0.18)",
+            background: "#fff",
+            border: "4px solid #1a1410",
+            boxShadow: "5px 5px 0px #1a1410, 0 8px 24px rgba(0,0,0,0.15)",
           }}
         >
-          <div style={{ color: "#8B6914", fontFamily: "'Fredoka One', cursive", fontSize: "13px", letterSpacing: "3px", marginBottom: "10px" }}>
+          {/* TOPIC番号バッジ */}
+          <div
+            className="inline-block px-3 py-1 rounded-full mb-3"
+            style={{ background: "#FFE135", border: "2px solid #1a1410", color: "#1a1410", fontFamily: "'Fredoka One', cursive", fontSize: "13px", letterSpacing: "2px", boxShadow: "2px 2px 0px #1a1410" }}
+          >
             TOPIC {String(topic.id).padStart(2, "0")}
           </div>
+          {/* ？マーク */}
           <div
             className="select-none"
-            style={{ color: "#c8a84b", fontFamily: "'Fredoka One', cursive", fontSize: "80px", lineHeight: 1, marginBottom: "10px", textShadow: "2px 2px 0 rgba(139,105,20,0.3)" }}
+            style={{ color: "#1a1410", fontFamily: "'Fredoka One', cursive", fontSize: "72px", lineHeight: 1, marginBottom: "10px" }}
           >
             ?
           </div>
-          <div style={{ color: "#5a3e10", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "20px", fontWeight: 900 }}>
+          {/* ラベル */}
+          <div
+            style={{
+              color: "#1a1410",
+              fontFamily: "'Zen Maru Gothic', sans-serif",
+              fontSize: "20px",
+              fontWeight: 900,
+              background: "#FFE135",
+              padding: "4px 12px",
+              borderRadius: "6px",
+              border: "2px solid #1a1410",
+            }}
+          >
             {topic.label}
           </div>
-          <div className="absolute bottom-4 right-5" style={{ color: "#a08040", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "12px" }}>
+          <div className="absolute bottom-4 right-5" style={{ color: "#888", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "12px", fontWeight: 700 }}>
             タップして開封！
           </div>
         </div>
