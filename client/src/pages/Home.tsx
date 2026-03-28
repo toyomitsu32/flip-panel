@@ -40,10 +40,10 @@ const topics = [
   { id: 4, label: "フィードバック",  emoji: "🗣️", title: "泥臭いフィードバックが品質を作る",       desc: "完成を待たず1人に使ってもらう大切さ",              slides: [7] },
   { id: 5, label: "インフラ構成",    emoji: "⚙️", title: "Claude Code × Google AI Studio",        desc: "バックエンドなし・フロントエンドのみで動く理由",   slides: [8, 9] },
   { id: 6, label: "開発フロー",      emoji: "🔄", title: "クオリティ優先の泥臭い開発フロー",       desc: "手動コピペでも最適解な理由とは？",                 slides: [10, 11] },
-  { id: 7, label: "今後の展望",      emoji: "🚀", title: "Google Cloud連携でマルチモーダルへ",     desc: "無料枠から始めて柔軟にスケールする構想",           slides: [12, 13] },
+  { id: 7, label: "まとめ",          emoji: "✅", title: "まとめ ─ 個人開発でここまでできる",          desc: "LLM × フロントエンドで価値を届けるために",           slides: [12, 13] },
 ];
 
-// ── スライドビューアーモーダル ──
+// ── スライドビューアーモーダル（全画面）──
 function SlideViewer({
   slideIndexes,
   onClose,
@@ -55,84 +55,82 @@ function SlideViewer({
   const total = slideIndexes.length;
   const url = SLIDE_URLS[slideIndexes[current]];
 
+  // キーボード操作
+  useState(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") setCurrent((c) => Math.min(total - 1, c + 1));
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") setCurrent((c) => Math.max(0, c - 1));
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ background: "rgba(0,0,0,0.75)" }}
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex flex-col"
+      style={{ background: "#1a1614" }}
     >
+      {/* 上部バー */}
       <div
-        className="relative w-full max-w-5xl mx-4"
-        onClick={(e) => e.stopPropagation()}
+        className="flex items-center justify-between px-6 py-3 shrink-0"
+        style={{ background: "#2a2420", borderBottom: "2px solid #4a4038" }}
       >
-        {/* ホワイトボード風フレーム */}
-        <div
-          className="rounded-2xl overflow-hidden"
-          style={{
-            background: "#e8e8e4",
-            border: "6px solid #c8c0b0",
-            boxShadow: "0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.6)",
-          }}
-        >
-          {/* 上部バー（マーカートレイ風） */}
-          <div
-            className="flex items-center justify-between px-4 py-2"
-            style={{ background: "#d0c8b8", borderBottom: "2px solid #b8b0a0" }}
-          >
-            <span className="text-xs font-bold tracking-widest" style={{ color: "#6b5e4e", fontFamily: "'Courier New', monospace" }}>
-              WHITEBOARD
-            </span>
-            <div className="flex gap-2">
-              <span className="w-3 h-3 rounded-full inline-block" style={{ background: "#e05050" }} />
-              <span className="w-3 h-3 rounded-full inline-block" style={{ background: "#e0a030" }} />
-              <span className="w-3 h-3 rounded-full inline-block" style={{ background: "#50b050" }} />
-            </div>
-            <button
-              onClick={onClose}
-              className="text-sm font-bold px-3 py-1 rounded"
-              style={{ background: "#b8b0a0", color: "#5a4e3e" }}
-            >
-              ✕ 閉じる
-            </button>
-          </div>
-
-          {/* スライド画像 */}
-          <div className="relative" style={{ aspectRatio: "16/9", background: "#f5f3ee" }}>
-            <img
-              src={url}
-              alt={`スライド ${slideIndexes[current] + 1}`}
-              className="w-full h-full object-contain"
-            />
-          </div>
-
-          {/* ナビゲーション */}
+        <span className="text-xs font-bold tracking-widest" style={{ color: "#a09080", fontFamily: "'Courier New', monospace" }}>
+          WHITEBOARD SLIDE VIEWER
+        </span>
+        <div className="flex items-center gap-4">
           {total > 1 && (
-            <div
-              className="flex items-center justify-between px-6 py-3"
-              style={{ background: "#d0c8b8", borderTop: "2px solid #b8b0a0" }}
-            >
+            <>
               <button
                 onClick={() => setCurrent((c) => Math.max(0, c - 1))}
                 disabled={current === 0}
                 className="px-4 py-1.5 rounded font-bold text-sm disabled:opacity-30"
-                style={{ background: "#b8b0a0", color: "#3a2e1e", fontFamily: "'Courier New', monospace" }}
+                style={{ background: "#4a4038", color: "#e0d8c8", fontFamily: "'Courier New', monospace" }}
               >
                 ← 前へ
               </button>
-              <span className="text-xs font-bold" style={{ color: "#6b5e4e", fontFamily: "'Courier New', monospace" }}>
+              <span className="text-sm font-bold" style={{ color: "#a09080", fontFamily: "'Courier New', monospace" }}>
                 {current + 1} / {total}
               </span>
               <button
                 onClick={() => setCurrent((c) => Math.min(total - 1, c + 1))}
                 disabled={current === total - 1}
                 className="px-4 py-1.5 rounded font-bold text-sm disabled:opacity-30"
-                style={{ background: "#b8b0a0", color: "#3a2e1e", fontFamily: "'Courier New', monospace" }}
+                style={{ background: "#4a4038", color: "#e0d8c8", fontFamily: "'Courier New', monospace" }}
               >
                 次へ →
               </button>
-            </div>
+            </>
           )}
+          <button
+            onClick={onClose}
+            className="text-sm font-bold px-4 py-1.5 rounded ml-4"
+            style={{ background: "#c03020", color: "#fff", fontFamily: "'Courier New', monospace" }}
+          >
+            ✕ 閉じる
+          </button>
         </div>
+      </div>
+
+      {/* スライド画像 ─ 残り全画面 */}
+      <div
+        className="flex-1 flex items-center justify-center"
+        style={{ background: "#1a1614", minHeight: 0 }}
+      >
+        <img
+          src={url}
+          alt={`スライド ${slideIndexes[current] + 1}`}
+          style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", display: "block" }}
+        />
+      </div>
+
+      {/* 下部ヒント */}
+      <div
+        className="text-center py-2 shrink-0 text-xs"
+        style={{ color: "#5a5048", background: "#2a2420", fontFamily: "'Courier New', monospace" }}
+      >
+        ← → キーでスライド切り替え　　ESC で閉じる
       </div>
     </div>
   );
