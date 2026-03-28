@@ -281,47 +281,74 @@ export default function Home() {
     <div
       className="min-h-screen flex flex-col items-center px-5 py-10"
       style={{
-        background: "linear-gradient(160deg, #FFF8E7 0%, #FFF0C8 40%, #FFE8A8 100%)",
+        background: "linear-gradient(160deg, #FFF3CC 0%, #FFE082 40%, #FFCA28 100%)",
         fontFamily: "'Zen Maru Gothic', sans-serif",
       }}
     >
       {/* ヘッダー ─ ホワイトボード風 */}
       <div
-        className="w-full max-w-5xl rounded-2xl px-8 py-6 mb-10 text-center"
+        className="w-full max-w-5xl rounded-2xl px-10 py-10 mb-10 text-center"
         style={{
-          background: "linear-gradient(145deg, #fff9e6, #fff3cc)",
-          border: "4px solid #FFE135",
-          boxShadow: "6px 6px 0px #E8C200, 0 12px 40px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9)",
+          background: "#fff",
+          border: "5px solid #1a1410",
+          boxShadow: "8px 8px 0px #1a1410, 0 16px 48px rgba(0,0,0,0.15)",
         }}
       >
         {/* ボード上部のフレーム */}
         <div
-          style={{ color: "#8B6914", fontFamily: "'Fredoka One', cursive", fontSize: "14px", letterSpacing: "3px", marginBottom: "12px" }}
-          >
-            🎉 リベシティ × スキルマーケットオフ会
+          className="inline-block px-5 py-2 rounded-full mb-5"
+          style={{ background: "#FFE135", border: "3px solid #1a1410", boxShadow: "3px 3px 0px #1a1410", color: "#1a1410", fontFamily: "'Fredoka One', cursive", fontSize: "15px", letterSpacing: "2px" }}
+        >
+          🎉 リベシティ × スキルマーケットオフ会
         </div>
         <h1
-          className="leading-tight mb-3"
-          style={{ color: "#1a1410", fontFamily: "'Fredoka One', cursive", fontSize: "clamp(26px, 5vw, 46px)" }}
+          className="leading-tight mb-4"
+          style={{ color: "#1a1410", fontFamily: "'Fredoka One', cursive", fontSize: "clamp(30px, 5.5vw, 54px)", lineHeight: 1.2 }}
         >
           LLMを使ったWebアプリ開発の裏側
           <br />
-          <span style={{ color: "#E64A19", fontSize: "1.1em" }}>全部見せます！</span>
+          <span
+            style={{
+              color: "#fff",
+              background: "#E64A19",
+              padding: "2px 16px",
+              borderRadius: "8px",
+              display: "inline-block",
+              marginTop: "6px",
+              fontSize: "1.1em",
+              boxShadow: "4px 4px 0px #b83010",
+            }}
+          >
+            全部見せます！
+          </span>
         </h1>
         {/* 手書き風アンダーライン */}
         <div
           className="mx-auto mb-3"
           style={{ width: "70%", height: "4px", background: "linear-gradient(90deg, #FFE135, #FF7043, #EC407A)", borderRadius: "4px" }}
         />
-        <p style={{ color: "#7a5a20", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "16px", fontWeight: 700 }}>
+        <p style={{ color: "#5a3e10", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "18px", fontWeight: 900, marginTop: "8px" }}>
           対談トピックパネル ─ クリックしてテーマを開封しよう！🎊
         </p>
       </div>
 
       {/* ヒント */}
-      <p className="mb-6" style={{ color: "#8B6914", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "15px", fontWeight: 700 }}>
-        👆 1回クリック → パネルをめくる　　2回クリック → スライドを表示
-      </p>
+      <div
+        className="w-full max-w-5xl flex flex-wrap justify-center gap-4 mb-6"
+      >
+        <div
+          className="px-5 py-2 rounded-full font-bold"
+          style={{ background: "#fff", border: "3px solid #1a1410", boxShadow: "3px 3px 0px #1a1410", color: "#1a1410", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "15px" }}
+        >
+          👆 1回クリック → パネルをめくる
+        </div>
+        <div
+          className="px-5 py-2 rounded-full font-bold"
+          style={{ background: "#fff", border: "3px solid #1a1410", boxShadow: "3px 3px 0px #1a1410", color: "#1a1410", fontFamily: "'Zen Maru Gothic', sans-serif", fontSize: "15px" }}
+        >
+          📋 2回クリック → スライドを表示
+        </div>
+      </div>
 
       {/* 進捗バー */}
       <div className="w-full max-w-5xl mb-8">
